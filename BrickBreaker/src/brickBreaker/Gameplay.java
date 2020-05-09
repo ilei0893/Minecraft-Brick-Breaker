@@ -7,7 +7,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,15 +19,23 @@ import java.io.InputStream;
 import java.util.*;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Gameplay extends JPanel implements KeyListener, ActionListener {
 	//Set up values for bricks and score
 	private boolean play = false;
+	private boolean lost = false;
 	private int score = 0;
-	private int totalBricks = 21;
+	private int totalBricks = 27;
+	private int level = 0;
 	Random random = new Random();
+	Music player = new Music();
 	
 	private Timer timer;
 	private int delay = 1;
@@ -49,35 +56,33 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 	private MapGenerator gameStage;
 	
 	//Set up timer and map Generator object
-	public Gameplay()
-	{
+	public Gameplay() {
 		gameStage = new MapGenerator (3,9);
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
 		timer = new Timer(delay, this);
 		timer.start();
+		Music player = new Music();
+		player.playMusic();
 	}
 	
-	public void paint(Graphics g)
-	{
-		
+	public void paint(Graphics g) {
 		//draw the background and bricks
 			try {
 				gameStage.draw(((Graphics2D)g));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			
 		//Setup custom minecraft themed font
 		InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("minecraft_font.ttf");
 		Font font = null;
 		
 		try {
-			font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(48f);
+			font = Font.createFont(Font.TRUETYPE_FONT, stream);
 		} catch (FontFormatException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -96,64 +101,30 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 		g.setColor(Color.green);
 		g.fillRect(playerX, 500, 100, 8);
 		
-		BufferedImage image = null;
-		try {
-			image = ImageIO.read(new File("F:\\Users\\ilei0\\eclipse-workspace\\BrickBreaker\\images\\Slimeball_JE2_BE2.png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		//the ball
-		g.drawImage(image, ballposX, ballposY, 30, 30, null);
-//		g.setColor(Color.yellow);
-//		g.fillOval(ballposX, ballposY, 20, 20);
+		drawBall(g);
 		
 		if(play)
-		{
 			printText(g, Color.WHITE, font, 20f,"Press control to restart", 100, 560);
-		}
+		
 		//Initial press arrow key instruction
 		if(!play && numPlays == 0)
-		{
 			printText(g, Color.BLACK, font, 30f, "Hit an arrow key to start." , 120, 300);
-		}
 		
-		//Lose condition
+		//Lose condition 
 		if(ballposY > 570) 
-		{
-			play = false;
-			ballXdir = 0;
-			ballYdir = 0;
-			
-			Color c = new Color(.5f,0f,0f,.5f);	//Draw transparent red death screen at 50% opacity
-			g.setColor(c);
-			g.drawRect(0, 0, width, height);
-			g.fillRect(0, 0, width, height);
-			
-			FontMetrics fm = g.getFontMetrics();
-			int x = ((width - fm.stringWidth("You Died! ")) / 2);
-			
-			printText(g, Color.WHITE, font, 40f, "You Died! ", x, 250);
-			printText(g, Color.WHITE, font, 20f, "You fell out of the world", 200, 300);
-			printText(g, Color.WHITE, font, 20f, "Press Space to restart.", 230, 350);
-			numPlays++;
-		}
+			lostCon();
+		
+		deathScreen(g, font);
+		
 		//Win condition
 		if(totalBricks <= 0)
-		{
-			play = false;
-			ballXdir = 0;
-			ballYdir = 0;
-			printText(g, Color.GREEN, font, 20f, "You Win!, Your Score: " + score, 160, 300);
-			printText(g, Color.GREEN, font, 20f, "Press Space to restart.", 230, 350);
-			numPlays++;
-		}
+			winCon(g, font);
+		
 		g.dispose();
 	}
 	@Override
-	public void actionPerformed(ActionEvent arg0) 
-	{
+	public void actionPerformed(ActionEvent arg0) {
 		timer.start();
 		if(play)
 		{
@@ -225,8 +196,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 	public void keyTyped(KeyEvent e) {}
 	
 	@Override
-	public void keyPressed(KeyEvent e) 
-	{
+	public void keyPressed(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_RIGHT) 
 		{
 			if(playerX >= 600)
@@ -271,9 +241,9 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 		playerX -= 50;
 	}
 	
-	public void restartGame()
-	{
+	public void restartGame() {
 		play = true;
+		lost = false;
 		ballposX = random.nextInt(600);
 		ballposY = 350;
 		ballXdir =  random.nextBoolean() ? a : b;
@@ -281,17 +251,100 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 		playerX = 310;
 		score = 0;
 		totalBricks = 21;
-		gameStage = new MapGenerator(3,7);
-		
+		gameStage = new MapGenerator(3, 9);
 		repaint();
 	}
 	//Sets and displays color, font, size, x, and y of given string
-	public void printText(Graphics g, Color c, Font f, float n, String s, int x, int y)
-	{
+	public void printText(Graphics g, Color c, Font f, float n, String s, int x, int y) {
 		g.setColor(c);
 		f = f.deriveFont(n);
 		g.setFont(f);
 		g.drawString(s, x, y);
 		
 	}
+	//Center death screen text
+	 public void drawCenteredString(String s, int w, int h, Graphics g, Font f, float n) {
+		    FontMetrics fm = g.getFontMetrics();
+		    int x = (w - fm.stringWidth(s)) / 2;
+		    f = f.deriveFont(n);
+			g.setFont(f);
+		    g.drawString(s, x, h);
+		  }
+	 
+	 public void drawBall(Graphics g) {
+		 BufferedImage image = null;
+			try {
+				image = ImageIO.read(new File("F:\\Users\\ilei0\\eclipse-workspace\\BrickBreaker\\images\\Slimeball_JE2_BE2.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			//the ball
+			g.drawImage(image, ballposX, ballposY, 30, 30, null);
+	 }
+	 //Win Condition
+	 public void winCon(Graphics g, Font font) {
+		 	play = false;
+			ballXdir = 0;
+			ballYdir = 0;
+			printText(g, Color.GREEN, font, 20f, "You Win!, Your Score: " + score, 160, 300);
+			printText(g, Color.GREEN, font, 20f, "Press Space to restart.", 230, 350);
+			numPlays++;
+			level++;
+	 }
+	 //Lost Condition
+	 public void lostCon() {
+		 	play = false;
+			lost = true;
+			try 
+			{
+				Clip clip = AudioSystem.getClip();
+				AudioInputStream inputStream= AudioSystem.getAudioInputStream(
+						Main.class.getResourceAsStream("OOF.wav"));
+				clip.open(inputStream);
+				clip.start();
+				
+			} catch (Exception e) 
+			{
+				System.err.println(e.getMessage());
+			}
+			ballposY = 569;
+		
+	 }
+	 //Draw the classic minecraft death screen
+	 public void deathScreen(Graphics g, Font font) {
+		 if(lost == true)
+			{
+				ballXdir = 0;
+				ballYdir = 0;
+				Color c = new Color(.5f,0f,0f,.5f);	//Draw transparent red death screen at 50% opacity
+				g.setColor(c);
+				g.drawRect(0, 0, width, height);
+				g.fillRect(0, 0, width, height);
+				
+				printText(g, Color.WHITE, font, 40f, "You Died! ", 240, 250);
+				printText(g, Color.WHITE, font, 20f, "You fell out of the world", 200, 300);
+				printText(g, Color.WHITE, font, 20f, "Press Space to restart.", 230, 350);
+				numPlays++;
+			}
+	 }
+	 //Play music depending on level
+	 public void musicPlayer() throws LineUnavailableException, UnsupportedAudioFileException, IOException {
+		 switch(level)
+		 {
+		 	case 1:
+		 		Clip clip = AudioSystem.getClip();
+				AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+						Main.class.getResourceAsStream("Sweden.wav"));
+				clip.open(inputStream);
+				clip.start();
+				break;
+		 	case 2:
+		 		Clip clip2 = AudioSystem.getClip();
+				AudioInputStream inputStream2 = AudioSystem.getAudioInputStream(
+						Main.class.getResourceAsStream("Ballad_of_the_Cats.wav"));
+				clip2.open(inputStream2);
+				clip2.start();
+				break;
+		 }
+	 }
 }
