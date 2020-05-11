@@ -32,17 +32,17 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 	private boolean play = false;
 	private static boolean lost = false;
 	private static int score = 0;
-	private int totalBricks = 27;
-	private int level = 0;
+	private static int totalBricks = 27;
+	private static int level = 0;
 	static Random random = new Random();
 
-	private Timer timer;
+	private static Timer timer;
 	private int delay = 1;
 
 	// Set up initial ball values;
-	private int playerX = 310;
-	private int ballposX = random.nextInt(600);
-	private int ballposY = 350;
+	private static int playerX = 310;
+	private static int ballposX = random.nextInt(600);
+	private static int ballposY = 350;
 	private static int a = -1;
 	private static int b = 1;
 	private static int ballXdir = random.nextBoolean() ? a : b;
@@ -91,6 +91,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 				e1.printStackTrace();
 			}
 		}
+		
 		if (State == STATE.GAME) {
 			try {
 				gameStage.draw(((Graphics2D) g));
@@ -126,11 +127,11 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 			// the ball
 			drawBall(g);
 
-			if (play)
+			if (getPlay())
 				printText(g, Color.WHITE, font, 20f, "Press control to restart", 100, 560);
 
 			// Initial press arrow key instruction
-			if (!play && State == STATE.GAME)
+			if (!getPlay() && State == STATE.GAME)
 				printText(g, Color.BLACK, font, 30f, "Hit an arrow key to start.", 120, 300);
 
 			// Lose condition
@@ -156,7 +157,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		if (State == STATE.GAME) {
 			System.out.println("1");
 			timer.start();
-			if (play) {
+			if (getPlay()) {
 				// Ball collision physics between ball and paddle
 				if (new Rectangle(ballposX, ballposY, 30, 30).intersects(new Rectangle(playerX, 500, 100, 8))) {
 					ballYdir = -ballYdir;
@@ -232,7 +233,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 				}
 			}
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				if (!play) {
+				if (!getPlay()) {
 					restartGame();
 				}
 			}
@@ -240,7 +241,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 				restartGame();
 			}
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				play = false;
+				setPlay(false);
 				timer.stop();
 				State = STATE.PAUSE;
 			}
@@ -270,6 +271,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 			if (mx >= 40 && mx <= 165) {
 				if (my >= 150 && my <= 210) {
 					Gameplay.State = Gameplay.STATE.GAME;
+					timer.restart();
 					player.pressButtonSound();
 					
 				}
@@ -303,7 +305,8 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 					player.pressButtonSound();
 					Gameplay.setLostStatus(false);
 					Gameplay.State = Gameplay.STATE.MENU;
-					timer.stop();
+					restartGame();
+					timer.restart();
 				}
 			}
 		}
@@ -311,17 +314,18 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 	}
 
 	public void moveRight() {
-		play = true;
+		setPlay(true);
 		playerX += 50;
 	}
 
 	public void moveLeft() {
-		play = true;
+		setPlay(true);
 		playerX -= 50;
 	}
-
+	
+	//Generate new map
 	public void restartGame() {
-		play = true;
+		setPlay(true);
 		lost = false;
 		ballposX = random.nextInt(600);
 		ballposY = 350;
@@ -336,7 +340,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 	
 	// Win Condition
 		public void winCon(Graphics g, Font font) {
-			play = false;
+			setPlay(false);
 			timer.stop();
 			ballXdir = 0;
 			ballYdir = 0;
@@ -345,12 +349,11 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 			numPlays++;
 			level++;
 			player.playMusic(level);
-			System.out.println(level);
 		}
 
 		// Lost Condition
 		public void lostCon(Graphics g, Font font) {
-			play = false;
+			setPlay(false);
 			lost = true;
 			try {
 				Clip clip = AudioSystem.getClip();
@@ -396,7 +399,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		g.drawImage(image, ballposX, ballposY, 30, 30, null);
 	}
 
-
+	
 	public static void setBallXdir(int num) {
 		ballXdir = num;
 	}
@@ -423,6 +426,14 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 
 	public static int getScore() {
 		return score;
+	}
+
+	public boolean getPlay() {
+		return play;
+	}
+
+	public void setPlay(boolean play) {
+		this.play = play;
 	}
 
 }
