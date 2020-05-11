@@ -344,11 +344,12 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 			timer.stop();
 			ballXdir = 0;
 			ballYdir = 0;
-			printText(g, Color.GREEN, font, 20f, "You Win!, Your Score: " + score, 200, 320);
-//			printText(g, Color.GREEN, font, 20f, "Press Space to restart.", 230, 350);
+			printText(g, Color.GREEN, font, 30f, "You Win!, Your Score: " + score, 150, 320);
+			printText(g, Color.GREEN, font, 30f, "Press Space to restart.", 140, 365);
 			numPlays++;
 //			level++;
-			player.playMusic(level);
+			player.winSound();
+//			player.playMusic(level);
 		}
 
 		// Lost Condition

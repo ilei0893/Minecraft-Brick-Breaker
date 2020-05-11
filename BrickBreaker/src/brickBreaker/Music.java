@@ -51,4 +51,16 @@ public class Music {
 		}
 	}
 
+	public void winSound() {
+		try {
+			Clip clip = AudioSystem.getClip();
+			AudioInputStream inputStream = AudioSystem
+					.getAudioInputStream(Main.class.getResourceAsStream("YaySoundEffect.wav"));
+			clip.open(inputStream);
+			clip.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
