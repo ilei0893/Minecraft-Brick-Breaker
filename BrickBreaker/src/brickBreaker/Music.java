@@ -12,10 +12,11 @@ public class Music {
 	}
 
 	public void playMusic(int level) {
-		System.out.println(level);
+//		System.out.println(level);
+		Clip clip = null;
 		if (level == 0) {
 			try {
-				Clip clip = AudioSystem.getClip();
+				clip = AudioSystem.getClip();
 				AudioInputStream inputStream = AudioSystem
 						.getAudioInputStream(Main.class.getResourceAsStream("Sweden.wav"));
 				clip.open(inputStream);
@@ -24,7 +25,8 @@ public class Music {
 				e.printStackTrace();
 			}
 
-		} else {
+		}
+		if (level == 1) {
 			try {
 				Clip clip2 = AudioSystem.getClip();
 				AudioInputStream inputStream2 = AudioSystem

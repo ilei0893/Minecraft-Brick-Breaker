@@ -29,7 +29,7 @@ public class DeathScreen {
 			g.drawImage(image, 175, 335, 336, 41, null);
 			g.drawImage(image2, 175, 390, 336, 41, null);
 
-			printText(g, Color.WHITE, font, 40f, "You died! ", 240, 250);
+			printText(g, Color.WHITE, font, 40f, "You died! ", 240, 260);
 			printText(g, Color.WHITE, font, 20f, "You fell out of the world", 200, 300);
 			printText(g, Color.WHITE, font, 15f, "Score: " + Gameplay.getScore() , 300, 325);
 			int numPlays = Gameplay.getNumPlays();

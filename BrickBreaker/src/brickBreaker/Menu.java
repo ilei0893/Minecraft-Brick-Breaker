@@ -13,14 +13,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class Menu {
 
 	public Rectangle playButton = new Rectangle(40, 150, 125, 60);
 	public Rectangle helpButton = new Rectangle(40, 500, 125, 60);
 	public Rectangle exitButton = new Rectangle(530, 500, 125, 60);
-	JLabel helpMenu = new JLabel("Help");
-
+	
 	public Menu() {
 
 	}
@@ -57,5 +57,6 @@ public class Menu {
 		g.drawImage(image2, 530, 500, 126, 61, null);
 
 	}
+	
 
 }
