@@ -58,12 +58,4 @@ public class Menu {
 
 	}
 
-	public void pauseMenu() throws IOException {
-
-	}
-
-	public void helpMenu() {
-		helpMenu.setVisible(true);
-	}
-
 }
