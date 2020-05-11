@@ -54,7 +54,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 
 	private MapGenerator gameStage;
 	private Music player;
-	private Menu initMenu;
+	private Menu menu;
 	private DeathScreen deathScreen;
 
 	// Set up timer, map Generator, and music object
@@ -67,7 +67,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		timer.start();
 		player = new Music();
 		player.playMusic(level);
-		initMenu = new Menu();
+		menu = new Menu();
 		deathScreen = new DeathScreen();
 		addMouseListener(this);
 	}
@@ -86,7 +86,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 				image = ImageIO
 						.read(new File("F:\\Users\\ilei0\\eclipse-workspace\\BrickBreaker\\images\\startscreen.jpg"));
 				g.drawImage(image, 0, 0, width, height, null);
-				initMenu.initialGameMenu(g);
+				menu.initialGameMenu(g);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
@@ -153,7 +153,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(State == STATE.GAME) {
+		if (State == STATE.GAME) {
 			System.out.println("1");
 			timer.start();
 			if (play) {
@@ -253,69 +253,70 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 
 	public void mouseClicked(MouseEvent arg0) {
 	}
+
 	public void mouseEntered(MouseEvent arg0) {
 	}
+
 	public void mouseExited(MouseEvent arg0) {
 	}
-	public void mouseReleased(MouseEvent arg0) {	
+
+	public void mouseReleased(MouseEvent arg0) {
 
 	}
-	
-	
+
 	public void mousePressed(MouseEvent e) {
 
 		int mx = e.getX();
 		int my = e.getY();
 
-		// Play button
-		if (mx >= 40 && mx <= 165) {
-			if (my >= 150 && my <= 210) {
-				Gameplay.State = Gameplay.STATE.GAME;
-				player.pressButtonSound();
+		if (Gameplay.State == Gameplay.STATE.MENU) {
+			// Play button
+			if (mx >= 40 && mx <= 165) {
+				if (my >= 150 && my <= 210) {
+					Gameplay.State = Gameplay.STATE.GAME;
+					player.pressButtonSound();
+				}
+			}
+			// Help button
+			if (mx >= 40 && mx <= 165) {
+				if (my >= 500 && my <= 560) {
+					menu.helpMenu();
+					player.pressButtonSound();
+				}
+			}
+			// Exit button
+			if (mx >= 530 && mx <= 655) {
+				if (my >= 500 && my <= 560) {
+					System.exit(1);
+				}
 			}
 		}
-		// Help button
-		if (mx >= 40 && mx <= 165) {
-			if (my >= 500 && my <= 560) {
-				player.pressButtonSound();
-			}
-		}
-		// Exit button
-		if (mx >= 530 && mx <= 655) {
-			if (my >= 500 && my <= 560) {
-				System.exit(1);
-			}
-		}
-		if(Gameplay.State == Gameplay.STATE.DEATH)
-		{
-			//Respawn button
-			if(mx >= 175 && mx <= 510)
-			{
-				if(my >= 325 && my <= 365)
-				{
+		if (Gameplay.State == Gameplay.STATE.DEATH) {
+			// Respawn button
+			if (mx >= 175 && mx <= 510) {
+				if (my >= 325 && my <= 365) {
 					player.pressButtonSound();
 //					resetGame = true;
 //					Gameplay.setLostStatus(false);
 					Gameplay.State = Gameplay.STATE.GAME;
 					restartGame();
-					
+
 				}
 			}
-			//Quit to title button
-			if(mx >= 175 && mx <= 510)
-			{
-				if(my >= 380 && my <= 420)
-				{
+			// Quit to title button
+			if (mx >= 175 && mx <= 510) {
+				if (my >= 380 && my <= 420) {
 					player.pressButtonSound();
 //					newGame = true;
 					Gameplay.setLostStatus(false);
 					Gameplay.State = Gameplay.STATE.MENU;
-					
+
 				}
 			}
 		}
-		
+
 	}
+
 	public void moveRight() {
 		play = true;
 		playerX += 50;
@@ -413,8 +414,8 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 	public static boolean getLostStatus() {
 		return lost;
 	}
-	public static void setLostStatus(boolean val)
-	{
+
+	public static void setLostStatus(boolean val) {
 		lost = val;
 	}
 

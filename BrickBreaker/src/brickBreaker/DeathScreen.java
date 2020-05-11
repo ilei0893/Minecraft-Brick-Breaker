@@ -11,8 +11,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class DeathScreen {
-	
-	
+
 	public void showDeathScreen(Graphics g, Font font) throws IOException {
 		if (Gameplay.getLostStatus() == true) {
 			Gameplay.setBallXdir(0);
@@ -21,8 +20,8 @@ public class DeathScreen {
 			g.setColor(c);
 			g.drawRect(0, 0, 700, 600);
 			g.fillRect(0, 0, 700, 600);
-			
-			//Respawn and TitleScreen buttons
+
+			// Respawn and TitleScreen buttons
 			BufferedImage image = ImageIO
 					.read(new File("F:\\Users\\ilei0\\eclipse-workspace\\BrickBreaker\\images\\RespawnButton.png"));
 			BufferedImage image2 = ImageIO

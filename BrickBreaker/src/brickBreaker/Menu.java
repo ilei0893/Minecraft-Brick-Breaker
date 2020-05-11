@@ -12,13 +12,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
+import javax.swing.JLabel;
 
 public class Menu {
-
 
 	public Rectangle playButton = new Rectangle(40, 150, 125, 60);
 	public Rectangle helpButton = new Rectangle(40, 500, 125, 60);
 	public Rectangle exitButton = new Rectangle(530, 500, 125, 60);
+	JLabel helpMenu = new JLabel("Help");
 
 	public Menu() {
 
@@ -46,19 +47,23 @@ public class Menu {
 		g2d.draw(playButton);
 		g2d.draw(helpButton);
 		g2d.draw(exitButton);
-		
+
 		BufferedImage image = ImageIO
 				.read(new File("F:\\Users\\ilei0\\eclipse-workspace\\BrickBreaker\\images\\PlayButton.png"));
 		g.drawImage(image, 40, 150, 126, 61, null);
-		
+
 		BufferedImage image2 = ImageIO
 				.read(new File("F:\\Users\\ilei0\\eclipse-workspace\\BrickBreaker\\images\\QuitButton.png"));
 		g.drawImage(image2, 530, 500, 126, 61, null);
-		
+
 	}
-	
-	public void pauseMenu(Graphics g) throws IOException {
-		
+
+	public void pauseMenu() throws IOException {
+
+	}
+
+	public void helpMenu() {
+		helpMenu.setVisible(true);
 	}
 
 }
