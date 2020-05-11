@@ -4,13 +4,18 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class DeathScreen {
 	
-	public Rectangle respawnButton = new Rectangle(175, 325, 350, 50);
-	public Rectangle titleScreenButton = new Rectangle(40, 150, 125, 60);
+	public Rectangle respawnButton = new Rectangle(175, 325, 335, 40);
+	public Rectangle titleScreenButton = new Rectangle(175, 380, 335, 40);
 	
-	public void showDeathScreen(Graphics g, Font font) {
+	public void showDeathScreen(Graphics g, Font font) throws IOException {
 		if (Gameplay.getLostStatus() == true) {
 			Gameplay.setBallXdir(0);
 			Gameplay.setBallYdir(0);
@@ -18,7 +23,14 @@ public class DeathScreen {
 			g.setColor(c);
 			g.drawRect(0, 0, 700, 600);
 			g.fillRect(0, 0, 700, 600);
-			g.drawRect(175, 325, 335, 40);
+			
+			//Respawn and TitleScreen buttons
+			BufferedImage image = ImageIO
+					.read(new File("F:\\Users\\ilei0\\eclipse-workspace\\BrickBreaker\\images\\RespawnButton.png"));
+			BufferedImage image2 = ImageIO
+					.read(new File("F:\\Users\\ilei0\\eclipse-workspace\\BrickBreaker\\images\\TitleScreenButton.png"));
+			g.drawImage(image, 175, 325, 336, 41, null);
+			g.drawImage(image2, 175, 380, 336, 41, null);
 
 			printText(g, Color.WHITE, font, 40f, "You died! ", 240, 250);
 			printText(g, Color.WHITE, font, 20f, "You fell out of the world", 200, 300);

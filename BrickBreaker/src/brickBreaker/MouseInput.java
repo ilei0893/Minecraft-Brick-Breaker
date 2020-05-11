@@ -3,6 +3,8 @@ package brickBreaker;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import brickBreaker.Gameplay.STATE;
+
 public class MouseInput implements MouseListener {
 
 	Music click = new Music();
@@ -36,6 +38,9 @@ public class MouseInput implements MouseListener {
 			}
 		}
 		
-		if(Gameplay.State == DEATH)
+		if(Gameplay.State == STATE.DEATH)
+		{
+			
+		}
 	}
 }

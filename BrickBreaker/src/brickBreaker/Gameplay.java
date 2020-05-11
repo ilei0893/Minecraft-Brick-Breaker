@@ -139,7 +139,11 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 				lostCon();
 
 			// Minecraft death screen
-			deathScreen.showDeathScreen(g, font);
+			try {
+				deathScreen.showDeathScreen(g, font);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 			// Win condition
 			if (totalBricks <= 0)
