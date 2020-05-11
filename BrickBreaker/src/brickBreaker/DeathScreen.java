@@ -26,12 +26,12 @@ public class DeathScreen {
 					.read(new File("F:\\Users\\ilei0\\eclipse-workspace\\BrickBreaker\\images\\RespawnButton.png"));
 			BufferedImage image2 = ImageIO
 					.read(new File("F:\\Users\\ilei0\\eclipse-workspace\\BrickBreaker\\images\\TitleScreenButton.png"));
-			g.drawImage(image, 175, 325, 336, 41, null);
-			g.drawImage(image2, 175, 380, 336, 41, null);
+			g.drawImage(image, 175, 335, 336, 41, null);
+			g.drawImage(image2, 175, 390, 336, 41, null);
 
 			printText(g, Color.WHITE, font, 40f, "You died! ", 240, 250);
 			printText(g, Color.WHITE, font, 20f, "You fell out of the world", 200, 300);
-//			printText(g, Color.WHITE, font, 20f, "Press Space to restart.", 230, 350);
+			printText(g, Color.WHITE, font, 15f, "Score: " + Gameplay.getScore() , 300, 325);
 			int numPlays = Gameplay.getNumPlays();
 			numPlays++;
 			Gameplay.setNumPlays(numPlays);
