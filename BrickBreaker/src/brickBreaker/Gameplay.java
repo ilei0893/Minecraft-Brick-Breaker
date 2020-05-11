@@ -76,7 +76,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public static enum STATE {
-		MENU, GAME, PAUSE
+		MENU, GAME, PAUSE, DEATH
 	};
 
 	public static STATE State = STATE.MENU;
