@@ -31,7 +31,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 	// Set up values for bricks and score
 	private boolean play = false;
 	private static boolean lost = false;
-	private int score = 0;
+	private static int score = 0;
 	private int totalBricks = 27;
 	private int level = 0;
 	static Random random = new Random();
@@ -137,12 +137,13 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 			if (ballposY > 570)
 				lostCon(g, font);
 
+			// Show death screen
 			try {
 				deathScreen.showDeathScreen(g, font);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 			// Win condition
 			if (totalBricks <= 0)
 				winCon(g, font);
@@ -151,7 +152,6 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		}
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if (State == STATE.GAME) {
 			System.out.println("1");
@@ -209,11 +209,8 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		repaint();
 	}
 
-	@Override
 	public void keyReleased(KeyEvent e) {
 	}
-
-	@Override
 	public void keyTyped(KeyEvent e) {
 	}
 
@@ -261,7 +258,6 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 	}
 
 	public void mouseReleased(MouseEvent arg0) {
-
 	}
 
 	public void mousePressed(MouseEvent e) {
@@ -275,12 +271,12 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 				if (my >= 150 && my <= 210) {
 					Gameplay.State = Gameplay.STATE.GAME;
 					player.pressButtonSound();
+					
 				}
 			}
 			// Help button
 			if (mx >= 40 && mx <= 165) {
 				if (my >= 500 && my <= 560) {
-					menu.helpMenu();
 					player.pressButtonSound();
 				}
 			}
@@ -294,23 +290,20 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		if (Gameplay.State == Gameplay.STATE.DEATH) {
 			// Respawn button
 			if (mx >= 175 && mx <= 510) {
-				if (my >= 325 && my <= 365) {
+				if (my >= 335 && my <= 365) {
 					player.pressButtonSound();
-//					resetGame = true;
-//					Gameplay.setLostStatus(false);
 					Gameplay.State = Gameplay.STATE.GAME;
 					restartGame();
-
+					timer.restart();
 				}
 			}
 			// Quit to title button
 			if (mx >= 175 && mx <= 510) {
-				if (my >= 380 && my <= 420) {
+				if (my >= 390 && my <= 420) {
 					player.pressButtonSound();
-//					newGame = true;
 					Gameplay.setLostStatus(false);
 					Gameplay.State = Gameplay.STATE.MENU;
-
+					timer.stop();
 				}
 			}
 		}
@@ -340,6 +333,38 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		gameStage = new MapGenerator(3, 9);
 		repaint();
 	}
+	
+	// Win Condition
+		public void winCon(Graphics g, Font font) {
+			play = false;
+			timer.stop();
+			ballXdir = 0;
+			ballYdir = 0;
+			printText(g, Color.GREEN, font, 20f, "You Win!, Your Score: " + score, 160, 300);
+			printText(g, Color.GREEN, font, 20f, "Press Space to restart.", 230, 350);
+			numPlays++;
+			level++;
+			player.playMusic(level);
+			System.out.println(level);
+		}
+
+		// Lost Condition
+		public void lostCon(Graphics g, Font font) {
+			play = false;
+			lost = true;
+			try {
+				Clip clip = AudioSystem.getClip();
+				AudioInputStream inputStream = AudioSystem.getAudioInputStream(Main.class.getResourceAsStream("OOF.wav"));
+				clip.open(inputStream);
+				clip.start();
+
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
+			ballposY = 569;
+			State = STATE.DEATH;
+			timer.stop();
+		}
 
 	// Sets and displays color, font, size, x, and y of given string
 	public void printText(Graphics g, Color c, Font f, float n, String s, int x, int y) {
@@ -371,37 +396,6 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		g.drawImage(image, ballposX, ballposY, 30, 30, null);
 	}
 
-	// Win Condition
-	public void winCon(Graphics g, Font font) {
-		play = false;
-		timer.stop();
-		ballXdir = 0;
-		ballYdir = 0;
-		printText(g, Color.GREEN, font, 20f, "You Win!, Your Score: " + score, 160, 300);
-		printText(g, Color.GREEN, font, 20f, "Press Space to restart.", 230, 350);
-		numPlays++;
-		level++;
-		player.playMusic(level);
-		System.out.println(level);
-	}
-
-	// Lost Condition
-	public void lostCon(Graphics g, Font font) {
-		play = false;
-		lost = true;
-		try {
-			Clip clip = AudioSystem.getClip();
-			AudioInputStream inputStream = AudioSystem.getAudioInputStream(Main.class.getResourceAsStream("OOF.wav"));
-			clip.open(inputStream);
-			clip.start();
-
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-		}
-		ballposY = 569;
-		State = STATE.DEATH;
-
-	}
 
 	public static void setBallXdir(int num) {
 		ballXdir = num;
@@ -425,6 +419,10 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 
 	public static int getNumPlays() {
 		return numPlays;
+	}
+
+	public static int getScore() {
+		return score;
 	}
 
 }
