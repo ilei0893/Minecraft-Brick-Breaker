@@ -1,6 +1,5 @@
 package brickBreaker;
 
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -17,9 +16,6 @@ public class MouseInput implements MouseListener {
 		int mx = e.getX();
 		int my = e.getY();
 
-//		public Rectangle playButton = new Rectangle(40, 150, 125, 60);
-//		public Rectangle helpButton = new Rectangle(40, 500, 125, 60);
-//		public Rectangle exitButton = new Rectangle(530, 500, 125, 60);
 
 		// Play button
 		if (mx >= 40 && mx <= 165) {

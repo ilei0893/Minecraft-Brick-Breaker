@@ -76,7 +76,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 	}
 
 	public static enum STATE {
-		MENU, GAME
+		MENU, GAME, PAUSE
 	};
 
 	public static STATE State = STATE.MENU;
@@ -247,6 +247,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener {
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				play = false;
 				timer.stop();
+				State = STATE.PAUSE;
 			}
 		}
 

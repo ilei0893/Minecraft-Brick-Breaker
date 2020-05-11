@@ -20,7 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-public class Menu extends JPopupMenu {
+public class Menu {
 	private boolean play;
 	private int numPlays;
 
