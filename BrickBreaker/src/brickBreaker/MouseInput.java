@@ -16,7 +16,6 @@ public class MouseInput implements MouseListener {
 		int mx = e.getX();
 		int my = e.getY();
 
-
 		// Play button
 		if (mx >= 40 && mx <= 165) {
 			if (my >= 150 && my <= 210) {
@@ -36,5 +35,7 @@ public class MouseInput implements MouseListener {
 				System.exit(1);
 			}
 		}
+		
+		if(Gameplay.State == DEATH)
 	}
 }

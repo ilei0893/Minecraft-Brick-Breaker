@@ -7,22 +7,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 public class Menu {
-	private boolean play;
-	private int numPlays;
+
 
 	public Rectangle playButton = new Rectangle(40, 150, 125, 60);
 	public Rectangle helpButton = new Rectangle(40, 500, 125, 60);
@@ -65,11 +57,4 @@ public class Menu {
 		
 	}
 
-	public void pauseMenu() {
-
-	}
-
-	public static void main(String[] args) throws IOException {
-
-	}
 }
