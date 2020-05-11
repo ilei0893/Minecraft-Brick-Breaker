@@ -12,8 +12,6 @@ import javax.imageio.ImageIO;
 
 public class DeathScreen {
 	
-	public Rectangle respawnButton = new Rectangle(175, 325, 335, 40);
-	public Rectangle titleScreenButton = new Rectangle(175, 380, 335, 40);
 	
 	public void showDeathScreen(Graphics g, Font font) throws IOException {
 		if (Gameplay.getLostStatus() == true) {
