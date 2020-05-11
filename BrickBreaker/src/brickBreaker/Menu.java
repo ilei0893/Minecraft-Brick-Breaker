@@ -56,5 +56,9 @@ public class Menu {
 		g.drawImage(image2, 530, 500, 126, 61, null);
 		
 	}
+	
+	public void pauseMenu(Graphics g) throws IOException {
+		
+	}
 
 }
