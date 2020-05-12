@@ -31,18 +31,18 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 	// Set up values for bricks and score
 	private boolean play = false;
 	private static boolean lost = false;
-	private int score = 0;
-	private int totalBricks = 27;
-	private int level = 0;
+	private static int score = 0;
+	private static int totalBricks = 27;
+	private static int level = 0;
 	static Random random = new Random();
 
-	private Timer timer;
+	private static Timer timer;
 	private int delay = 1;
 
 	// Set up initial ball values;
-	private int playerX = 310;
-	private int ballposX = random.nextInt(600);
-	private int ballposY = 350;
+	private static int playerX = 310;
+	private static int ballposX = random.nextInt(600);
+	private static int ballposY = 350;
 	private static int a = -1;
 	private static int b = 1;
 	private static int ballXdir = random.nextBoolean() ? a : b;
@@ -54,7 +54,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 
 	private MapGenerator gameStage;
 	private Music player;
-	private Menu initMenu;
+	private Menu menu;
 	private DeathScreen deathScreen;
 
 	// Set up timer, map Generator, and music object
@@ -67,7 +67,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		timer.start();
 		player = new Music();
 		player.playMusic(level);
-		initMenu = new Menu();
+		menu = new Menu();
 		deathScreen = new DeathScreen();
 		addMouseListener(this);
 	}
@@ -86,11 +86,12 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 				image = ImageIO
 						.read(new File("F:\\Users\\ilei0\\eclipse-workspace\\BrickBreaker\\images\\startscreen.jpg"));
 				g.drawImage(image, 0, 0, width, height, null);
-				initMenu.initialGameMenu(g);
+				menu.initialGameMenu(g);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 		}
+		
 		if (State == STATE.GAME) {
 			try {
 				gameStage.draw(((Graphics2D) g));
@@ -126,23 +127,24 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 			// the ball
 			drawBall(g);
 
-			if (play)
+			if (getPlay())
 				printText(g, Color.WHITE, font, 20f, "Press control to restart", 100, 560);
 
 			// Initial press arrow key instruction
-			if (!play && State == STATE.GAME)
+			if (!getPlay() && State == STATE.GAME)
 				printText(g, Color.BLACK, font, 30f, "Hit an arrow key to start.", 120, 300);
 
 			// Lose condition
 			if (ballposY > 570)
 				lostCon(g, font);
 
+			// Show death screen
 			try {
 				deathScreen.showDeathScreen(g, font);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 			// Win condition
 			if (totalBricks <= 0)
 				winCon(g, font);
@@ -151,12 +153,11 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		}
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(State == STATE.GAME) {
+		if (State == STATE.GAME) {
 			System.out.println("1");
 			timer.start();
-			if (play) {
+			if (getPlay()) {
 				// Ball collision physics between ball and paddle
 				if (new Rectangle(ballposX, ballposY, 30, 30).intersects(new Rectangle(playerX, 500, 100, 8))) {
 					ballYdir = -ballYdir;
@@ -209,11 +210,8 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		repaint();
 	}
 
-	@Override
 	public void keyReleased(KeyEvent e) {
 	}
-
-	@Override
 	public void keyTyped(KeyEvent e) {
 	}
 
@@ -235,7 +233,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 				}
 			}
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				if (!play) {
+				if (!getPlay()) {
 					restartGame();
 				}
 			}
@@ -243,7 +241,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 				restartGame();
 			}
 			if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				play = false;
+				setPlay(false);
 				timer.stop();
 				State = STATE.PAUSE;
 			}
@@ -253,81 +251,81 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 
 	public void mouseClicked(MouseEvent arg0) {
 	}
+
 	public void mouseEntered(MouseEvent arg0) {
 	}
+
 	public void mouseExited(MouseEvent arg0) {
 	}
-	public void mouseReleased(MouseEvent arg0) {	
 
+	public void mouseReleased(MouseEvent arg0) {
 	}
-	
-	
+
 	public void mousePressed(MouseEvent e) {
 
 		int mx = e.getX();
 		int my = e.getY();
 
-		// Play button
-		if (mx >= 40 && mx <= 165) {
-			if (my >= 150 && my <= 210) {
-				Gameplay.State = Gameplay.STATE.GAME;
-				player.pressButtonSound();
-			}
-		}
-		// Help button
-		if (mx >= 40 && mx <= 165) {
-			if (my >= 500 && my <= 560) {
-				player.pressButtonSound();
-			}
-		}
-		// Exit button
-		if (mx >= 530 && mx <= 655) {
-			if (my >= 500 && my <= 560) {
-				System.exit(1);
-			}
-		}
-		if(Gameplay.State == Gameplay.STATE.DEATH)
-		{
-			//Respawn button
-			if(mx >= 175 && mx <= 510)
-			{
-				if(my >= 325 && my <= 365)
-				{
+		if (Gameplay.State == Gameplay.STATE.MENU) {
+			// Play button
+			if (mx >= 40 && mx <= 165) {
+				if (my >= 150 && my <= 210) {
+					Gameplay.State = Gameplay.STATE.GAME;
+					timer.restart();
 					player.pressButtonSound();
-//					resetGame = true;
-//					Gameplay.setLostStatus(false);
+					
+				}
+			}
+			// Help button
+			if (mx >= 40 && mx <= 165) {
+				if (my >= 500 && my <= 560) {
+					player.pressButtonSound();
+				}
+			}
+			// Exit button
+			if (mx >= 530 && mx <= 655) {
+				if (my >= 500 && my <= 560) {
+					System.exit(1);
+				}
+			}
+		}
+		if (Gameplay.State == Gameplay.STATE.DEATH) {
+			// Respawn button
+			if (mx >= 175 && mx <= 510) {
+				if (my >= 335 && my <= 365) {
+					player.pressButtonSound();
 					Gameplay.State = Gameplay.STATE.GAME;
 					restartGame();
-					
+					timer.restart();
 				}
 			}
-			//Quit to title button
-			if(mx >= 175 && mx <= 510)
-			{
-				if(my >= 380 && my <= 420)
-				{
+			// Quit to title button
+			if (mx >= 175 && mx <= 510) {
+				if (my >= 390 && my <= 420) {
 					player.pressButtonSound();
-//					newGame = true;
 					Gameplay.setLostStatus(false);
 					Gameplay.State = Gameplay.STATE.MENU;
-					
+					restartGame();
+					timer.restart();
 				}
 			}
 		}
-		
+
 	}
+
 	public void moveRight() {
-		play = true;
+		setPlay(true);
 		playerX += 50;
 	}
 
 	public void moveLeft() {
-		play = true;
+		setPlay(true);
 		playerX -= 50;
 	}
-
+	
+	//Generate new map
 	public void restartGame() {
-		play = true;
+		setPlay(true);
 		lost = false;
 		ballposX = random.nextInt(600);
 		ballposY = 350;
@@ -339,6 +337,38 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		gameStage = new MapGenerator(3, 9);
 		repaint();
 	}
+	
+	// Win Condition
+		public void winCon(Graphics g, Font font) {
+			setPlay(false);
+			timer.stop();
+			ballXdir = 0;
+			ballYdir = 0;
+			printText(g, Color.GREEN, font, 30f, "You Win!, Your Score: " + score, 150, 320);
+			printText(g, Color.GREEN, font, 30f, "Press Space to restart.", 140, 365);
+			numPlays++;
+//			level++;
+			player.winSound();
+//			player.playMusic(level);
+		}
+
+		// Lost Condition
+		public void lostCon(Graphics g, Font font) {
+			setPlay(false);
+			lost = true;
+			try {
+				Clip clip = AudioSystem.getClip();
+				AudioInputStream inputStream = AudioSystem.getAudioInputStream(Main.class.getResourceAsStream("OOF.wav"));
+				clip.open(inputStream);
+				clip.start();
+
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
+			ballposY = 569;
+			State = STATE.DEATH;
+			timer.stop();
+		}
 
 	// Sets and displays color, font, size, x, and y of given string
 	public void printText(Graphics g, Color c, Font f, float n, String s, int x, int y) {
@@ -370,38 +400,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 		g.drawImage(image, ballposX, ballposY, 30, 30, null);
 	}
 
-	// Win Condition
-	public void winCon(Graphics g, Font font) {
-		play = false;
-		timer.stop();
-		ballXdir = 0;
-		ballYdir = 0;
-		printText(g, Color.GREEN, font, 20f, "You Win!, Your Score: " + score, 160, 300);
-		printText(g, Color.GREEN, font, 20f, "Press Space to restart.", 230, 350);
-		numPlays++;
-		level++;
-		player.playMusic(level);
-		System.out.println(level);
-	}
-
-	// Lost Condition
-	public void lostCon(Graphics g, Font font) {
-		play = false;
-		lost = true;
-		try {
-			Clip clip = AudioSystem.getClip();
-			AudioInputStream inputStream = AudioSystem.getAudioInputStream(Main.class.getResourceAsStream("OOF.wav"));
-			clip.open(inputStream);
-			clip.start();
-
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-		}
-		ballposY = 569;
-		State = STATE.DEATH;
-
-	}
-
+	
 	public static void setBallXdir(int num) {
 		ballXdir = num;
 	}
@@ -413,8 +412,8 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 	public static boolean getLostStatus() {
 		return lost;
 	}
-	public static void setLostStatus(boolean val)
-	{
+
+	public static void setLostStatus(boolean val) {
 		lost = val;
 	}
 
@@ -424,6 +423,18 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 
 	public static int getNumPlays() {
 		return numPlays;
+	}
+
+	public static int getScore() {
+		return score;
+	}
+
+	public boolean getPlay() {
+		return play;
+	}
+
+	public void setPlay(boolean play) {
+		this.play = play;
 	}
 
 }
