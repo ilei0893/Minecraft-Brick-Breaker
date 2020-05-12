@@ -46,7 +46,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener, Mou
 	private static int a = -1;
 	private static int b = 1;
 	private static int ballXdir = random.nextBoolean() ? a : b;
-	private static int ballYdir = -10;
+	private static int ballYdir = -7;
 	private static int numPlays = 0;
 
 	private static int width = 700;
