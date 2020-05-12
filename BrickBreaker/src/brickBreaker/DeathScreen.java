@@ -30,7 +30,8 @@ public class DeathScreen {
 
 			printText(g, Color.WHITE, font, 40f, "You died! ", 240, 260);
 			printText(g, Color.WHITE, font, 20f, "You fell out of the world", 200, 300);
-			printText(g, Color.WHITE, font, 15f, "Score: " + Gameplay.getScore() , 300, 325);
+			printText(g, Color.WHITE, font, 15f, "Score: " , 300, 325);
+			printText(g, Color.YELLOW,font, 15f, "" + Gameplay.getScore(), 370, 325);
 			int numPlays = Gameplay.getNumPlays();
 			numPlays++;
 			Gameplay.setNumPlays(numPlays);
